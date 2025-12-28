@@ -1,23 +1,36 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: "Gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    pass: process.env.EMAIL_PASS, // App Password
   },
 });
 
-async function sendOTP(email, otp) {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "ClassTalk OTP Code",
-    text: `Your OTP is ${otp}. It expires in 5 minutes. Please do not share this code with anyone.`,
-  };
+// OPTIONAL but recommended
+transporter.verify((err) => {
+  if (err) console.error("SMTP ERROR:", err);
+  else console.log("SMTP READY");
+});
 
-  await transporter.sendMail(mailOptions);
-}
+const sendOTP = async (email, otp) => {
+  try {
+    await transporter.sendMail({
+      from: `"ClassTalk" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "ClassTalk OTP Code",
+      html: `
+        <h2>Your OTP</h2>
+        <p><b>${otp}</b></p>
+        <p>Expires in 5 minutes. Do not share this code.</p>
+      `,
+    });
+    console.log(`OTP sent to ${email}`);
+  } catch (error) {
+    console.error("OTP send failed:", error);
+  }
+};
 
 module.exports = sendOTP;
