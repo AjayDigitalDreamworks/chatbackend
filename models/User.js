@@ -1,0 +1,16 @@
+const mongoose = require("mongoose");
+
+const UserSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  name: { type: String },
+  educationType: { type: String, enum: ["school", "college"] },
+  schoolClass: { type: String },
+  collegeStream: { type: String },
+  collegeYear: { type: String },
+  dob: { type: Date },
+  phone: { type: String },
+  city: { type: String },
+  isProfileComplete: { type: Boolean, default: false },
+}, { timestamps: true });
+
+module.exports = mongoose.model("User", UserSchema);
